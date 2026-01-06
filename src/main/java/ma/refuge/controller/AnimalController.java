@@ -1,5 +1,6 @@
 package ma.refuge.controller;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -84,4 +85,5 @@ public class AnimalController {
         raceField.clear();
         ageField.clear();
     }
+
 }

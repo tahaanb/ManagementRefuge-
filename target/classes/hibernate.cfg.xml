@@ -6,13 +6,21 @@
 <hibernate-configuration>
     <session-factory>
 
+<<<<<<< HEAD
         <!-- Connexion BD -->
+=======
+        <!-- Connexion -->
+>>>>>>> c1881b8c8b33dbc4122590762c56fbdb1c74ac89
         <property name="hibernate.connection.driver_class">
             com.mysql.cj.jdbc.Driver
         </property>
 
         <property name="hibernate.connection.url">
+<<<<<<< HEAD
             jdbc:mysql://localhost:3306/refuge_db
+=======
+            jdbc:mysql://localhost:3306/refuge_db?useSSL=false&amp;serverTimezone=UTC
+>>>>>>> c1881b8c8b33dbc4122590762c56fbdb1c74ac89
         </property>
 
         <property name="hibernate.connection.username">root</property>
@@ -23,8 +31,13 @@
             org.hibernate.dialect.MySQL8Dialect
         </property>
 
+<<<<<<< HEAD
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
+=======
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+>>>>>>> c1881b8c8b33dbc4122590762c56fbdb1c74ac89
 
         <!-- Entités -->
         <mapping class="ma.refuge.model.Animal"/>
