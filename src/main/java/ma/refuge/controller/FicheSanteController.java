@@ -18,7 +18,7 @@ public class FicheSanteController {
     @FXML
     public void ajouterFicheSante(int animalId) {
         FicheSante fiche = new FicheSante();
-        fiche.setDate(LocalDate.now());
+        fiche.setDate(datePicker.getValue() != null ? datePicker.getValue() : LocalDate.now());
         fiche.setDescription(descriptionArea.getText());
         fiche.setDocumentPath(documentField.getText());
 

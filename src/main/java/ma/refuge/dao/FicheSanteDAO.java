@@ -7,10 +7,10 @@ import org.hibernate.Session;
 public class FicheSanteDAO {
 
     public void save(FicheSante f) {
-        Session s = HibernateUtil.getSessionFactory().openSession();
-        s.beginTransaction();
-        s.save(f);
-        s.getTransaction().commit();
-        s.close();
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            s.beginTransaction();
+            s.save(f);
+            s.getTransaction().commit();
+        }
     }
 }

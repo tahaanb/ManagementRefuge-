@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.AnimalController">
+
+    <top>
+        <fx:include source="navbar.fxml"/>
+    </top>
+
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Gestion des Animaux" styleClass="title"/>
+
+            <TableView fx:id="animalTable">
+                <columns>
+                    <TableColumn fx:id="nomColumn" text="Nom"/>
+                    <TableColumn fx:id="especeColumn" text="Espèce"/>
+                    <TableColumn fx:id="raceColumn" text="Race"/>
+                    <TableColumn fx:id="ageColumn" text="Âge"/>
+                    <TableColumn fx:id="statutColumn" text="Statut"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10">
+                <Button text="Ajouter" styleClass="btn-success" onAction="#ajouterAnimal"/>
+                <Button text="Modifier" styleClass="btn-warning" onAction="#modifierAnimal"/>
+                <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerAnimal"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

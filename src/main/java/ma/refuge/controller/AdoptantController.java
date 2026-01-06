@@ -10,6 +10,11 @@ import ma.refuge.service.AdoptantService;
 public class AdoptantController {
 
     @FXML private TableView<Adoptant> adoptantTable;
+    @FXML private TableColumn<Adoptant, String> nomColumn;
+    @FXML private TableColumn<Adoptant, String> prenomColumn;
+    @FXML private TableColumn<Adoptant, String> telephoneColumn;
+    @FXML private TableColumn<Adoptant, String> emailColumn;
+
     @FXML private TextField nomField;
     @FXML private TextField prenomField;
     @FXML private TextField telephoneField;
@@ -20,6 +25,10 @@ public class AdoptantController {
 
     @FXML
     public void initialize() {
+        if (nomColumn != null) nomColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNom()));
+        if (prenomColumn != null) prenomColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getPrenom()));
+        if (telephoneColumn != null) telephoneColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getTelephone()));
+        if (emailColumn != null) emailColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEmail()));
         chargerAdoptants();
     }
 
@@ -31,7 +40,6 @@ public class AdoptantController {
                 telephoneField.getText(),
                 emailField.getText()
         );
-
         adoptantService.ajouterAdoptant(adoptant);
         chargerAdoptants();
         viderChamps();

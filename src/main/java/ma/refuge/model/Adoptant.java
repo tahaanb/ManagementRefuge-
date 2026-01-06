@@ -1,6 +1,6 @@
 package ma.refuge.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -16,12 +16,23 @@ public class Adoptant {
     private String telephone;
     private String email;
 
-    @OneToMany(mappedBy = "adoptant")
+    @OneToMany(mappedBy = "adoptant", fetch = FetchType.LAZY)
     private List<Animal> animauxAdoptes;
 
     public Adoptant() {}
 
-    /* Getters & Setters */
+    public Adoptant(String nom, String prenom, String telephone, String email) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.telephone = telephone;
+        this.email = email;
+    }
+
+
+
+
+
+/* Getters & Setters */
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

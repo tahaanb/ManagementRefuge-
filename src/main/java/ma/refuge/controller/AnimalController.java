@@ -1,6 +1,5 @@
 package ma.refuge.controller;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -28,9 +27,12 @@ public class AnimalController {
 
     @FXML
     public void initialize() {
-        statutCombo.setItems(
-                FXCollections.observableArrayList("DISPONIBLE", "ADOPTE")
-        );
+        statutCombo.setItems(FXCollections.observableArrayList("DISPONIBLE", "ADOPTE"));
+
+        if (nomColumn != null) nomColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNom()));
+        if (especeColumn != null) especeColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEspece()));
+        if (raceColumn != null) raceColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getRace()));
+        if (statutColumn != null) statutColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getStatutAdoption()));
 
         chargerAnimaux();
     }
@@ -43,7 +45,6 @@ public class AnimalController {
                 raceField.getText(),
                 Integer.parseInt(ageField.getText())
         );
-
         animal.setStatutAdoption("DISPONIBLE");
         animalService.ajouterAnimal(animal);
         chargerAnimaux();
@@ -59,7 +60,6 @@ public class AnimalController {
             selected.setRace(raceField.getText());
             selected.setAge(Integer.parseInt(ageField.getText()));
             selected.setStatutAdoption(statutCombo.getValue());
-
             animalService.modifierAnimal(selected);
             chargerAnimaux();
         }
@@ -85,5 +85,4 @@ public class AnimalController {
         raceField.clear();
         ageField.clear();
     }
-
 }

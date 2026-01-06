@@ -1,6 +1,6 @@
 package ma.refuge.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -26,12 +26,22 @@ public class Animal {
     @JoinColumn(name = "adoptant_id")
     private Adoptant adoptant;
 
-    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FicheSante> fichesSante;
 
     public Animal() {}
 
-    /* Getters & Setters */
+    public Animal(String nom, String espece, String race, int age) {
+        this.nom = nom;
+        this.espece = espece;
+        this.race = race;
+        this.age = age;
+    }
+
+
+
+
+/* Getters & Setters */
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

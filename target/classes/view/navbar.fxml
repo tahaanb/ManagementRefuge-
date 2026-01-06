@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox spacing="20"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ma.refuge.controller.NavbarController"
+      styleClass="navbar">
+
+    <Button text="Dashboard" onAction="#goDashboard"/>
+    <Button text="Animaux" onAction="#goAnimals"/>
+    <Button text="Adoptants" onAction="#goAdoptants"/>
+    <Button text="Historique" onAction="#goHistorique"/>
+</HBox>

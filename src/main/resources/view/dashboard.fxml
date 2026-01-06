@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.DashboardController">
+
+    <top>
+        <fx:include source="navbar.fxml"/>
+    </top>
+
+    <center>
+        <VBox spacing="30" alignment="CENTER" styleClass="dashboard">
+            <Label text="🐾 Refuge Management System" styleClass="title"/>
+            <HBox spacing="20">
+                <VBox styleClass="card">
+                    <Label text="Animaux"/>
+                    <Label fx:id="animalCount"/>
+                </VBox>
+                <VBox styleClass="card">
+                    <Label text="Adoptants"/>
+                    <Label fx:id="adoptantCount"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,6 +1,6 @@
 package ma.refuge.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,7 +17,10 @@ public class Historique {
 
     public Historique() {}
 
-    /* Getters & Setters */
+
+
+
+/* Getters & Setters */
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

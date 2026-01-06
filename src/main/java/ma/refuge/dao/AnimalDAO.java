@@ -3,38 +3,45 @@ package ma.refuge.dao;
 import ma.refuge.model.Animal;
 import ma.refuge.util.HibernateUtil;
 import org.hibernate.Session;
+
 import java.util.List;
 
 public class AnimalDAO {
 
     public void save(Animal animal) {
-        Session s = HibernateUtil.getSessionFactory().openSession();
-        s.beginTransaction();
-        s.save(animal);
-        s.getTransaction().commit();
-        s.close();
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            s.beginTransaction();
+            s.save(animal);
+            s.getTransaction().commit();
+        }
     }
 
     public void update(Animal animal) {
-        Session s = HibernateUtil.getSessionFactory().openSession();
-        s.beginTransaction();
-        s.update(animal);
-        s.getTransaction().commit();
-        s.close();
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            s.beginTransaction();
+            s.update(animal);
+            s.getTransaction().commit();
+        }
     }
 
-    public void delete(Animal animal) {
-        Session s = HibernateUtil.getSessionFactory().openSession();
-        s.beginTransaction();
-        s.delete(animal);
-        s.getTransaction().commit();
-        s.close();
+    public Animal findById(int id) {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            return s.get(Animal.class, id);
+        }
+    }
+
+    public void deleteById(int id) {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            s.beginTransaction();
+            Animal a = s.get(Animal.class, id);
+            if (a != null) s.delete(a);
+            s.getTransaction().commit();
+        }
     }
 
     public List<Animal> findAll() {
-        Session s = HibernateUtil.getSessionFactory().openSession();
-        List<Animal> list = s.createQuery("from Animal", Animal.class).list();
-        s.close();
-        return list;
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            return s.createQuery("from Animal", Animal.class).list();
+        }
     }
 }

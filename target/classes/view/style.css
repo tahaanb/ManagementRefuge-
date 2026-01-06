@@ -1,0 +1,66 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #f4f6f9;
+}
+
+/* NAVBAR */
+.navbar {
+    -fx-padding: 15;
+    -fx-background-color: linear-gradient(to right, #1e3c72, #2a5298);
+}
+
+.navbar Button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.navbar Button:hover {
+    -fx-underline: true;
+}
+
+/* TITRES */
+.title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+/* DASHBOARD */
+.dashboard {
+    -fx-padding: 40;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-padding: 30;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 5);
+    -fx-transition: all 0.3s;
+}
+
+.card:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* BOUTONS */
+.btn-success {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+}
+
+.btn-warning {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+}
+
+.btn-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+Button {
+    -fx-padding: 10 20;
+    -fx-background-radius: 10;
+}
