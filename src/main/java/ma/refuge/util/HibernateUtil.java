@@ -1,16 +1,32 @@
-public class MainApp extends Application {
+package ma.refuge.util;
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(
-                getClass().getResource("/view/main.fxml")
-        );
-        stage.setTitle("Gestion du Refuge");
-        stage.setScene(new Scene(root));
-        stage.show();
+
+
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class HibernateUtil {
+
+    private static final SessionFactory sessionFactory = buildSessionFactory();
+
+    private static SessionFactory buildSessionFactory() {
+        try {
+            // Charge hibernate.cfg.xml depuis src/main/resources
+            return new Configuration()
+                    .configure("hibernate.cfg.xml")
+                    .buildSessionFactory();
+        } catch (Throwable ex) {
+            System.err.println("❌ Échec de création de la SessionFactory.");
+            ex.printStackTrace();
+            throw new ExceptionInInitializerError(ex);
+        }
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public static void shutdown() {
+        getSessionFactory().close();
     }
 }
