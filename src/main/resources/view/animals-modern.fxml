@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.AnimalModernController"
+            styleClass="main-container">
+
+    <!-- Header avec recherche et filtres -->
+    <top>
+        <VBox styleClass="header-section" spacing="15">
+            <padding>
+                <Insets top="20" right="30" bottom="20" left="30"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label text="🐾 Nos Animaux" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+ Ajouter un animal" styleClass="btn-primary" onAction="#openAddAnimalDialog"/>
+            </HBox>
+
+            <!-- Barre de recherche et filtres -->
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="🔍 Rechercher un animal..."
+                           styleClass="search-field" HBox.hgrow="ALWAYS"
+                           onKeyReleased="#handleSearch"/>
+
+                <ComboBox fx:id="especeFilter" promptText="Espèce"
+                          styleClass="filter-combo" onAction="#applyFilters"/>
+
+                <ComboBox fx:id="statutFilter" promptText="Statut"
+                          styleClass="filter-combo" onAction="#applyFilters"/>
+
+                <Button text="Réinitialiser" styleClass="btn-secondary" onAction="#resetFilters"/>
+            </HBox>
+
+            <!-- Statistiques rapides -->
+            <HBox spacing="20" styleClass="stats-container">
+                <VBox styleClass="stat-card" alignment="CENTER" spacing="5">
+                    <Label fx:id="totalAnimalsLabel" text="0" styleClass="stat-number"/>
+                    <Label text="Total animaux" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" alignment="CENTER" spacing="5">
+                    <Label fx:id="availableAnimalsLabel" text="0" styleClass="stat-number"/>
+                    <Label text="Disponibles" styleClass="stat-label"/>
+                </VBox>
+                <VBox styleClass="stat-card" alignment="CENTER" spacing="5">
+                    <Label fx:id="adoptedAnimalsLabel" text="0" styleClass="stat-number"/>
+                    <Label text="Adoptés" styleClass="stat-label"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Zone de défilement avec les cards d'animaux -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="animals-scroll">
+            <FlowPane fx:id="animalsContainer"
+                      hgap="25" vgap="25"
+                      styleClass="animals-grid"
+                      alignment="TOP_LEFT">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+            </FlowPane>
+        </ScrollPane>
+    </center>
+</BorderPane>

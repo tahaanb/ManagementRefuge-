@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.DashboardModernController">
+
+    <top>
+        <fx:include source="navbar.fxml"/>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="dashboard-scroll">
+            <VBox spacing="0" styleClass="dashboard-container">
+                <!-- En-tête du dashboard -->
+                <VBox styleClass="dashboard-header" spacing="10">
+                    <padding>
+                        <Insets top="30" right="30" bottom="30" left="30"/>
+                    </padding>
+
+                    <Label text="📊 Tableau de Bord" styleClass="dashboard-title"/>
+                    <Label text="Vue d'ensemble de votre refuge" styleClass="dashboard-subtitle"/>
+                </VBox>
+
+                <!-- Statistiques -->
+                <VBox fx:id="statsContainer" spacing="0"/>
+
+                <!-- Graphiques et activité récente -->
+                <VBox fx:id="chartsContainer" spacing="20"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
