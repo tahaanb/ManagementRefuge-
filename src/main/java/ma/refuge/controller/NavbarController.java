@@ -24,10 +24,10 @@ public class NavbarController {
     }
 
     @FXML
-    public void goDashboard() { loadView("dashboard-simple.fxml"); }
+    public void goDashboard() { loadView("dashboard-modern.fxml"); }
 
     @FXML
-    public void goAnimals() { loadView("animals.fxml"); }
+    public void goAnimals() { loadView("animals-modern.fxml"); }
 
     @FXML
     public void goAdoptants() { loadView("adoptants.fxml"); }
