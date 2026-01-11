@@ -11,6 +11,7 @@ import ma.refuge.service.HistoriqueService;
 public class HistoriqueController {
 
     @FXML private TableView<Historique> historiqueTable;
+    @FXML private TableColumn<Historique, String> dateColumn;
     @FXML private TableColumn<Historique, String> actionColumn;
     @FXML private TableColumn<Historique, String> descriptionColumn;
 
@@ -19,6 +20,7 @@ public class HistoriqueController {
 
     @FXML
     public void initialize() {
+        if (dateColumn != null) dateColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDate().toString()));
         if (actionColumn != null) actionColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getAction()));
         if (descriptionColumn != null) descriptionColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getDescription()));
         chargerHistorique();

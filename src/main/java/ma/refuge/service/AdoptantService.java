@@ -22,6 +22,15 @@ public class AdoptantService {
         historiqueDAO.save(h);
     }
 
+    public void modifierAdoptant(Adoptant adoptant) {
+        adoptantDAO.update(adoptant);
+        Historique h = new Historique();
+        h.setDate(LocalDateTime.now());
+        h.setAction("MODIFICATION ADOPTANT");
+        h.setDescription("Modification adoptant : " + adoptant.getNom());
+        historiqueDAO.save(h);
+    }
+
     public void supprimerAdoptant(int id) {
         adoptantDAO.deleteById(id);
         Historique h = new Historique();

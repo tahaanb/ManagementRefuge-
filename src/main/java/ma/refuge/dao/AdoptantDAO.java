@@ -16,6 +16,14 @@ public class AdoptantDAO {
         }
     }
 
+    public void update(Adoptant a) {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            s.beginTransaction();
+            s.update(a);
+            s.getTransaction().commit();
+        }
+    }
+
     public Adoptant findById(int id) {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
             return s.get(Adoptant.class, id);

@@ -4,27 +4,21 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
-<BorderPane fx:id="root"
-            xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ma.refuge.controller.HistoriqueController">
+<VBox spacing="15"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ma.refuge.controller.HistoriqueController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
+    <Label text="Historique des Actions" styleClass="title"/>
 
-    <center>
-        <VBox spacing="15">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
-            <Label text="Historique des Actions" styleClass="title"/>
-
-            <TableView fx:id="historiqueTable">
-                <columns>
-                    <TableColumn fx:id="dateColumn" text="Date"/>
-                    <TableColumn fx:id="actionColumn" text="Action"/>
-                    <TableColumn fx:id="descriptionColumn" text="Description"/>
-                </columns>
-            </TableView>
-        </VBox>
-    </center>
-</BorderPane>
+    <TableView fx:id="historiqueTable">
+        <columns>
+            <TableColumn fx:id="dateColumn" text="Date"/>
+            <TableColumn fx:id="actionColumn" text="Action"/>
+            <TableColumn fx:id="descriptionColumn" text="Description"/>
+        </columns>
+    </TableView>
+</VBox>

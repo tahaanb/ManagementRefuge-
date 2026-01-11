@@ -4,36 +4,35 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
-<BorderPane fx:id="root"
-            xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ma.refuge.controller.AdoptantController">
+<VBox spacing="15"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ma.refuge.controller.AdoptantController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-    <top>
-        <fx:include source="navbar.fxml"/>
-    </top>
+    <Label text="Gestion des Adoptants" styleClass="title"/>
 
-    <center>
-        <VBox spacing="15">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
+    <TableView fx:id="adoptantTable">
+        <columns>
+            <TableColumn fx:id="nomColumn" text="Nom"/>
+            <TableColumn fx:id="prenomColumn" text="Prénom"/>
+            <TableColumn fx:id="telephoneColumn" text="Téléphone"/>
+            <TableColumn fx:id="emailColumn" text="Email"/>
+        </columns>
+    </TableView>
 
-            <Label text="Gestion des Adoptants" styleClass="title"/>
+    <HBox spacing="10">
+        <TextField fx:id="nomField" promptText="Nom"/>
+        <TextField fx:id="prenomField" promptText="Prénom"/>
+        <TextField fx:id="telephoneField" promptText="Téléphone"/>
+        <TextField fx:id="emailField" promptText="Email"/>
+    </HBox>
 
-            <TableView fx:id="adoptantTable">
-                <columns>
-                    <TableColumn fx:id="nomColumn" text="Nom"/>
-                    <TableColumn fx:id="prenomColumn" text="Prénom"/>
-                    <TableColumn fx:id="telephoneColumn" text="Téléphone"/>
-                    <TableColumn fx:id="emailColumn" text="Email"/>
-                </columns>
-            </TableView>
-
-            <HBox spacing="10">
-                <Button text="Ajouter" styleClass="btn-success" onAction="#ajouterAdoptant"/>
-                <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerAdoptant"/>
-            </HBox>
-        </VBox>
-    </center>
-</BorderPane>
+    <HBox spacing="10">
+        <Button text="Ajouter" styleClass="btn-success" onAction="#ajouterAdoptant"/>
+        <Button text="Modifier" styleClass="btn-warning" onAction="#modifierAdoptant"/>
+        <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerAdoptant"/>
+    </HBox>
+</VBox>

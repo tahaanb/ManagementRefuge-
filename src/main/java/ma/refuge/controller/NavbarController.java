@@ -7,21 +7,24 @@ import javafx.scene.layout.Pane;
 
 public class NavbarController {
 
-    @FXML
-    private BorderPane root; // le BorderPane parent défini dans Dashboard.fxml, Animal.fxml, etc.
+    private static BorderPane staticRoot;
+
+    public static void setStaticRoot(BorderPane root) {
+        staticRoot = root;
+    }
 
     private void loadView(String fxml) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/" + fxml));
             Pane view = loader.load();
-            root.setCenter(view); // remplace seulement le contenu central
+            staticRoot.setCenter(view); // remplace seulement le contenu central
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    public void goDashboard() { loadView("dashboard.fxml"); }
+    public void goDashboard() { loadView("dashboard-simple.fxml"); }
 
     @FXML
     public void goAnimals() { loadView("animals.fxml"); }

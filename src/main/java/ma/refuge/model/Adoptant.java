@@ -51,4 +51,9 @@ public class Adoptant {
 
     public List<Animal> getAnimauxAdoptes() { return animauxAdoptes; }
     public void setAnimauxAdoptes(List<Animal> animauxAdoptes) { this.animauxAdoptes = animauxAdoptes; }
+
+    @Override
+    public String toString() {
+        return nom + " " + prenom;
+    }
 }
