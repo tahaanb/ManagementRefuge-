@@ -41,7 +41,7 @@ public class AnimalDAO {
 
     public List<Animal> findAll() {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
-            return s.createQuery("from Animal", Animal.class).list();
+            return s.createQuery("SELECT DISTINCT a FROM Animal a LEFT JOIN FETCH a.adoptant", Animal.class).list();
         }
     }
 }

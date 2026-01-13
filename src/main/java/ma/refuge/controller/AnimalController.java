@@ -3,250 +3,252 @@ package ma.refuge.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import ma.refuge.model.Adoptant;
 import ma.refuge.model.Animal;
 import ma.refuge.service.AdoptantService;
 import ma.refuge.service.AnimalService;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 public class AnimalController {
 
+    // --- Éléments FXML ---
     @FXML private TableView<Animal> animalTable;
+    @FXML private TableColumn<Animal, String> photoColumn;
     @FXML private TableColumn<Animal, String> nomColumn;
     @FXML private TableColumn<Animal, String> especeColumn;
-    @FXML private TableColumn<Animal, String> raceColumn;
-    @FXML private TableColumn<Animal, Integer> ageColumn;
     @FXML private TableColumn<Animal, String> statutColumn;
-    @FXML private TableColumn<Animal, String> adoptantColumn;
 
     @FXML private TextField nomField;
     @FXML private TextField especeField;
     @FXML private TextField raceField;
     @FXML private TextField ageField;
+    @FXML private ImageView previewImage;
 
     @FXML private ComboBox<String> statutCombo;
-    @FXML private ComboBox<Adoptant> adoptantCombo;
+    @FXML private ComboBox<Adoptant> adoptantCombo; // Attention : doit être présent dans le FXML
+    @FXML private Button ficheSanteBtn;
 
+    // --- Services et Données ---
     private final AnimalService animalService = new AnimalService();
     private final AdoptantService adoptantService = new AdoptantService();
     private final ObservableList<Animal> animaux = FXCollections.observableArrayList();
     private final ObservableList<Adoptant> adoptants = FXCollections.observableArrayList();
 
+    private File selectedImageFile;
+
+
+    @FXML private Button adoptBtn; // Nouveau bouton dans le FXML
+
     @FXML
     public void initialize() {
+        // Init Statut
         statutCombo.setItems(FXCollections.observableArrayList("DISPONIBLE", "ADOPTE"));
 
-        if (nomColumn != null) nomColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNom()));
-        if (especeColumn != null) especeColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getEspece()));
-        if (raceColumn != null) raceColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getRace()));
-        if (ageColumn != null) ageColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getAge()).asObject());
-        if (statutColumn != null) statutColumn.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getStatutAdoption()));
-        if (adoptantColumn != null) adoptantColumn.setCellValueFactory(c -> {
-            Adoptant adoptant = c.getValue().getAdoptant();
-            return new javafx.beans.property.SimpleStringProperty(adoptant != null ? adoptant.getNom() + " " + adoptant.getPrenom() : "");
-        });
+        // Init Tableau avec CellFactory pour les images et les badges
+        setupTableDesign();
+
+        // Sécurité boutons
+        ficheSanteBtn.disableProperty().bind(animalTable.getSelectionModel().selectedItemProperty().isNull());
+        if(adoptBtn != null) {
+            adoptBtn.disableProperty().bind(
+                    animalTable.getSelectionModel().selectedItemProperty().isNull()
+                            .or(adoptantCombo.getSelectionModel().selectedItemProperty().isNull())
+            );
+        }
 
         chargerAnimaux();
         chargerAdoptants();
 
-        // Listener pour remplir les champs lors de la sélection d'une ligne
-        animalTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                remplirChamps(newSelection);
+        animalTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            remplirChamps(newVal); // Cette méthode gère maintenant le vidage de l'image
+        });
+    }
+
+
+    private void setupTableDesign() {
+        nomColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        especeColumn.setCellValueFactory(new PropertyValueFactory<>("espece"));
+
+        // --- IMAGE DANS LE TABLEAU (L'effet Waouh) ---
+        photoColumn.setCellValueFactory(new PropertyValueFactory<>("photoPath"));
+        photoColumn.setCellFactory(param -> new TableCell<>() {
+            private final ImageView imgView = new ImageView();
+            @Override
+            protected void updateItem(String path, boolean empty) {
+                super.updateItem(path, empty);
+                if (empty || path == null || path.isEmpty()) {
+                    setGraphic(null);
+                } else {
+                    try {
+                        Image img = new Image("file:" + path, 45, 45, true, true);
+                        imgView.setImage(img);
+                        Circle clip = new Circle(22.5, 22.5, 22.5);
+                        imgView.setClip(clip);
+                        setGraphic(imgView);
+                    } catch (Exception e) { setGraphic(null); }
+                }
+            }
+        });
+
+        // --- BADGE DE STATUT ---
+        statutColumn.setCellValueFactory(new PropertyValueFactory<>("statutAdoption"));
+        statutColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    Label badge = new Label(item);
+                    badge.getStyleClass().add(item.equals("DISPONIBLE") ? "badge-dispo" : "badge-adopte");
+                    setGraphic(badge);
+                }
+            }
+        });
+    }
+    private void setupPhotoColumn() {
+        photoColumn.setCellFactory(param -> new TableCell<>() {
+            private final ImageView imgView = new ImageView();
+            @Override
+            protected void updateItem(String path, boolean empty) {
+                super.updateItem(path, empty);
+                if (empty || path == null) {
+                    setGraphic(null);
+                } else {
+                    try {
+                        // Utilisation de "file:" pour charger depuis le disque local
+                        Image img = new Image("file:" + path, 50, 50, true, true);
+                        imgView.setImage(img);
+                        Circle clip = new Circle(25, 25, 25); // Image ronde
+                        imgView.setClip(clip);
+                        setGraphic(imgView);
+                    } catch (Exception e) {
+                        setGraphic(null);
+                    }
+                }
             }
         });
     }
 
     @FXML
-    public void ajouterAnimal() {
-        // Validation des champs
-        String nom = nomField.getText().trim();
-        String espece = especeField.getText().trim();
-        String race = raceField.getText().trim();
-        String ageText = ageField.getText().trim();
+    public void choisirPhoto() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir la photo de l'animal");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
 
-        // Vérification des champs vides
-        if (nom.isEmpty() || espece.isEmpty() || race.isEmpty() || ageText.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Champs obligatoires manquants");
-            alert.setContentText("Tous les champs (Nom, Espèce, Race, Âge) sont obligatoires.");
-            alert.showAndWait();
-            return;
-        }
+        Stage stage = (Stage) nomField.getScene().getWindow();
+        selectedImageFile = fileChooser.showOpenDialog(stage);
 
-        // Validation de l'âge
-        int age;
-        try {
-            age = Integer.parseInt(ageText);
-            if (age <= 0 || age > 50) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur de saisie");
-                alert.setHeaderText("Âge invalide");
-                alert.setContentText("L'âge doit être un nombre positif entre 1 et 50 ans.");
-                alert.showAndWait();
-                return;
-            }
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Âge invalide");
-            alert.setContentText("L'âge doit être un nombre entier.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Validation de la longueur des champs
-        if (nom.length() > 50 || espece.length() > 50 || race.length() > 50) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Données trop longues");
-            alert.setContentText("Les champs ne doivent pas dépasser 50 caractères.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Vérification que l'animal n'existe pas déjà
-        boolean animalExists = animalService.listerAnimaux().stream()
-                .anyMatch(a -> a.getNom().equalsIgnoreCase(nom) &&
-                              a.getEspece().equalsIgnoreCase(espece) &&
-                              a.getRace().equalsIgnoreCase(race));
-        if (animalExists) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Animal déjà existant");
-            alert.setContentText("Un animal avec le même nom, espèce et race existe déjà dans le système.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Création et sauvegarde de l'animal
-        try {
-            Animal animal = new Animal(nom, espece, race, age);
-            animal.setStatutAdoption("DISPONIBLE");
-            animalService.ajouterAnimal(animal);
-
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Succès");
-            successAlert.setHeaderText("Animal ajouté");
-            successAlert.setContentText("L'animal \"" + nom + "\" a été ajouté avec succès.");
-            successAlert.showAndWait();
-
-            chargerAnimaux();
-            viderChamps();
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Erreur lors de l'ajout");
-            alert.setContentText("Une erreur s'est produite lors de l'ajout de l'animal : " + e.getMessage());
-            alert.showAndWait();
+        if (selectedImageFile != null) {
+            previewImage.setImage(new Image(selectedImageFile.toURI().toString()));
         }
     }
 
     @FXML
-    public void modifierAnimal() {
-        Animal selected = animalTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText("Aucun animal sélectionné");
-            alert.setContentText("Veuillez sélectionner un animal dans le tableau avant de modifier.");
-            alert.showAndWait();
-            return;
-        }
 
-        // Validation des champs
+    public void ajouterAnimal() {
         String nom = nomField.getText().trim();
         String espece = especeField.getText().trim();
         String race = raceField.getText().trim();
         String ageText = ageField.getText().trim();
-        String statut = statutCombo.getValue();
 
-        // Vérification des champs vides
-        if (nom.isEmpty() || espece.isEmpty() || race.isEmpty() || ageText.isEmpty() || statut == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Champs obligatoires manquants");
-            alert.setContentText("Tous les champs (Nom, Espèce, Race, Âge, Statut) sont obligatoires.");
-            alert.showAndWait();
+        // 1. Validation UX : Guidage utilisateur
+        if (nom.isEmpty() || espece.isEmpty() || ageText.isEmpty()) {
+            afficherAlerte("Champ Manquant", "💡 Astuce : Le nom et l'espèce sont indispensables pour identifier l'animal.", Alert.AlertType.WARNING);
             return;
         }
 
-        // Validation de l'âge
-        int age;
+        // 2. Vérification Doublon (Nom + Espèce + Race)
+        boolean exists = animalService.listerAnimaux().stream()
+                .anyMatch(a -> a.getNom().equalsIgnoreCase(nom)
+                        && a.getEspece().equalsIgnoreCase(espece)
+                        && a.getRace().equalsIgnoreCase(race));
+
+        if (exists) {
+            afficherAlerte("Animal Déjà Présent", "🚫 Cet animal semble déjà être enregistré dans le refuge.", Alert.AlertType.ERROR);
+            return;
+        }
+
         try {
-            age = Integer.parseInt(ageText);
-            if (age <= 0 || age > 50) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur de saisie");
-                alert.setHeaderText("Âge invalide");
-                alert.setContentText("L'âge doit être un nombre positif entre 1 et 50 ans.");
-                alert.showAndWait();
-                return;
+            int age = Integer.parseInt(ageText);
+            Animal animal = new Animal(nom, espece, race, age);
+            animal.setStatutAdoption("DISPONIBLE");
+
+            // 3. Gestion de l'image avec chemin absolu pour l'affichage TableView
+            if (selectedImageFile != null) {
+                String fileName = System.currentTimeMillis() + "_" + nom + ".jpg";
+                animalService.sauvegarderImagePhysique(selectedImageFile, fileName);
+                // On stocke le chemin absolu pour être sûr que JavaFX le trouve
+                File savedFile = new File("uploads/animals/" + fileName);
+                animal.setPhotoPath(savedFile.getAbsolutePath());
             }
+
+            animalService.ajouterAnimal(animal);
+            afficherAlerte("Succès !", "🐾 " + nom + " a rejoint la famille du refuge.", Alert.AlertType.INFORMATION);
+
+            reinitialiserInterface();
         } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Âge invalide");
-            alert.setContentText("L'âge doit être un nombre entier.");
-            alert.showAndWait();
+            afficherAlerte("Format Incorrect", "L'âge doit être un nombre entier.", Alert.AlertType.ERROR);
+        } catch (Exception e) {
+            afficherAlerte("Erreur Système", e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+
+    @FXML
+    public void adopterAnimal() {
+        Animal selected = animalTable.getSelectionModel().getSelectedItem();
+        Adoptant adoptant = adoptantCombo.getValue();
+
+        if (selected == null || adoptant == null) return;
+
+        if ("ADOPTE".equals(selected.getStatutAdoption())) {
+            afficherAlerte("Déjà adopté", "Cet animal a déjà trouvé un foyer !", Alert.AlertType.WARNING);
             return;
         }
 
-        // Validation de la longueur des champs
-        if (nom.length() > 50 || espece.length() > 50 || race.length() > 50) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Données trop longues");
-            alert.setContentText("Les champs ne doivent pas dépasser 50 caractères.");
-            alert.showAndWait();
-            return;
-        }
+        selected.setAdoptant(adoptant);
+        selected.setStatutAdoption("ADOPTE");
+        animalService.modifierAnimal(selected);
 
-        // Vérification que l'animal n'est pas déjà adopté si on essaie de le modifier
-        if ("ADOPTE".equals(selected.getStatutAdoption()) && !"ADOPTE".equals(statut)) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation");
-            alert.setHeaderText("Changement de statut");
-            alert.setContentText("Cet animal est déjà adopté. Voulez-vous vraiment changer son statut ?");
+        afficherAlerte("Adoption Réussie !", selected.getNom() + " part avec " + adoptant.getNom(), Alert.AlertType.INFORMATION);
+        chargerAnimaux();
+        viderChamps();
+    }
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isEmpty() || result.get() != ButtonType.OK) {
-                return;
-            }
-        }
 
-        // Modification de l'animal
+
+    @FXML
+    public void modifierAnimal() {
+        Animal selected = animalTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
         try {
-            selected.setNom(nom);
-            selected.setEspece(espece);
-            selected.setRace(race);
-            selected.setAge(age);
-            selected.setStatutAdoption(statut);
-
-            // Logique métier : si le statut devient DISPONIBLE, l'adoptant doit être null
-            if ("DISPONIBLE".equals(statut)) {
-                selected.setAdoptant(null);
-            }
+            selected.setNom(nomField.getText());
+            selected.setEspece(especeField.getText());
+            selected.setRace(raceField.getText());
+            selected.setAge(Integer.parseInt(ageField.getText()));
+            if (statutCombo != null) selected.setStatutAdoption(statutCombo.getValue());
 
             animalService.modifierAnimal(selected);
-
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Succès");
-            successAlert.setHeaderText("Animal modifié");
-            successAlert.setContentText("L'animal \"" + nom + "\" a été modifié avec succès.");
-            successAlert.showAndWait();
-
             chargerAnimaux();
-            viderChamps();
+            afficherAlerte("Succès", "Modification effectuée", Alert.AlertType.INFORMATION);
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Erreur lors de la modification");
-            alert.setContentText("Une erreur s'est produite lors de la modification de l'animal : " + e.getMessage());
-            alert.showAndWait();
+            afficherAlerte("Erreur", "Erreur lors de la modification", Alert.AlertType.ERROR);
         }
     }
 
@@ -254,23 +256,36 @@ public class AnimalController {
     public void supprimerAnimal() {
         Animal selected = animalTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation de suppression");
-            alert.setHeaderText("Supprimer l'animal");
-            alert.setContentText("Êtes-vous sûr de vouloir supprimer l'animal \"" + selected.getNom() + "\" ?");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Supprimer " + selected.getNom() + " ?");
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    animalService.supprimerAnimal(selected.getId());
+                    chargerAnimaux();
+                    viderChamps();
+                }
+            });
+        }
+    }
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                animalService.supprimerAnimal(selected.getId());
-                chargerAnimaux();
-                viderChamps();
-            }
-        } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText("Aucun animal sélectionné");
-            alert.setContentText("Veuillez sélectionner un animal dans le tableau avant de supprimer.");
-            alert.showAndWait();
+    @FXML
+    private void ouvrirFicheSante() {
+        Animal selected = animalTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/FicheSante.fxml"));
+            Parent root = loader.load();
+            FicheSanteController controller = loader.getController();
+            controller.setAnimal(selected);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Fiche Santé - " + selected.getNom());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(animalTable.getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            afficherAlerte("Erreur", "Impossible d'ouvrir la fiche santé.", Alert.AlertType.ERROR);
         }
     }
 
@@ -280,89 +295,27 @@ public class AnimalController {
     }
 
     private void chargerAdoptants() {
-        adoptants.setAll(adoptantService.listerAdoptants());
-        adoptantCombo.setItems(adoptants);
+        if (adoptantCombo != null) {
+            adoptants.setAll(adoptantService.listerAdoptants());
+            adoptantCombo.setItems(adoptants);
+        }
     }
 
     private void remplirChamps(Animal animal) {
-        nomField.setText(animal.getNom());
-        especeField.setText(animal.getEspece());
-        raceField.setText(animal.getRace());
-        ageField.setText(String.valueOf(animal.getAge()));
-        statutCombo.setValue(animal.getStatutAdoption());
-        // Pour l'adoptant, on pourrait pré-sélectionner s'il y en a un, mais pour la modification on laisse vide
-        adoptantCombo.setValue(null);
-    }
+        if (animal != null) {
+            nomField.setText(animal.getNom());
+            especeField.setText(animal.getEspece());
+            raceField.setText(animal.getRace());
+            ageField.setText(String.valueOf(animal.getAge()));
+            statutCombo.setValue(animal.getStatutAdoption());
 
-    @FXML
-    public void adopterAnimal() {
-        Animal selected = animalTable.getSelectionModel().getSelectedItem();
-        Adoptant adoptant = adoptantCombo.getValue();
-
-        // Validation de la sélection
-        if (selected == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText("Aucun animal sélectionné");
-            alert.setContentText("Veuillez sélectionner un animal dans le tableau.");
-            alert.showAndWait();
-            return;
-        }
-
-        if (adoptant == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText("Aucun adoptant sélectionné");
-            alert.setContentText("Veuillez sélectionner un adoptant dans la liste déroulante.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Vérification que l'animal n'est pas déjà adopté
-        if ("ADOPTE".equals(selected.getStatutAdoption())) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Animal déjà adopté");
-            alert.setContentText("Cet animal est déjà adopté par " +
-                (selected.getAdoptant() != null ? selected.getAdoptant().getNom() + " " + selected.getAdoptant().getPrenom() : "quelqu'un") +
-                ". Vous ne pouvez pas l'adopter à nouveau.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Confirmation de l'adoption
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirmation d'adoption");
-        confirmAlert.setHeaderText("Adopter l'animal");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir adopter \"" + selected.getNom() +
-            "\" (" + selected.getEspece() + ") par " + adoptant.getNom() + " " + adoptant.getPrenom() + " ?");
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) {
-            return;
-        }
-
-        // Processus d'adoption
-        try {
-            selected.setAdoptant(adoptant);
-            selected.setStatutAdoption("ADOPTE");
-            animalService.modifierAnimal(selected);
-
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Succès");
-            successAlert.setHeaderText("Adoption réussie");
-            successAlert.setContentText("L'animal \"" + selected.getNom() + "\" a été adopté par " +
-                adoptant.getNom() + " " + adoptant.getPrenom() + " avec succès.");
-            successAlert.showAndWait();
-
-            chargerAnimaux();
-            adoptantCombo.setValue(null); // Reset la sélection
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Erreur lors de l'adoption");
-            alert.setContentText("Une erreur s'est produite lors de l'adoption : " + e.getMessage());
-            alert.showAndWait();
+            if (animal.getPhotoPath() != null && !animal.getPhotoPath().isEmpty()) {
+                previewImage.setImage(new Image("file:" + animal.getPhotoPath()));
+            } else {
+                previewImage.setImage(null); // Nettoie l'image si l'animal n'en a pas
+            }
+        } else {
+            viderChamps();
         }
     }
 
@@ -371,5 +324,21 @@ public class AnimalController {
         especeField.clear();
         raceField.clear();
         ageField.clear();
+        statutCombo.setValue(null);
+        adoptantCombo.setValue(null);
+        previewImage.setImage(null); // Correction du bug : l'image disparaît bien
+        selectedImageFile = null;
+    }
+
+    private void reinitialiserInterface() {
+        chargerAnimaux();
+        viderChamps();
+    }
+
+    private void afficherAlerte(String titre, String msg, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titre);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }

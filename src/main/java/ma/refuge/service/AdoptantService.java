@@ -43,4 +43,8 @@ public class AdoptantService {
     public List<Adoptant> listerAdoptants() {
         return adoptantDAO.findAll();
     }
+    
+    public boolean aDesAnimauxAdoptes(int adoptantId) {
+        return adoptantDAO.aDesAnimauxAdoptes(adoptantId);
+    }
 }

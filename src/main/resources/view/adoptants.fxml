@@ -2,37 +2,75 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<VBox spacing="15"
-      xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ma.refuge.controller.AdoptantController">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
 
-    <Label text="Gestion des Adoptants" styleClass="title"/>
+<ScrollPane fitToWidth="true" styleClass="dashboard-container" stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.AdoptantController">
 
-    <TableView fx:id="adoptantTable">
-        <columns>
-            <TableColumn fx:id="nomColumn" text="Nom"/>
-            <TableColumn fx:id="prenomColumn" text="Prénom"/>
-            <TableColumn fx:id="telephoneColumn" text="Téléphone"/>
-            <TableColumn fx:id="emailColumn" text="Email"/>
-        </columns>
-    </TableView>
+    <VBox spacing="25" styleClass="dashboard-content" style="-fx-padding: 40;">
 
-    <HBox spacing="10">
-        <TextField fx:id="nomField" promptText="Nom"/>
-        <TextField fx:id="prenomField" promptText="Prénom"/>
-        <TextField fx:id="telephoneField" promptText="Téléphone"/>
-        <TextField fx:id="emailField" promptText="Email"/>
-    </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <VBox>
+                <Label text="👥 Gestion des Adoptants" styleClass="dashboard-title"/>
+                <Label text="Gérez la communauté des futurs parents de vos animaux." style="-fx-text-fill: #636e72; -fx-font-size: 14px;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="🔄"  styleClass="btn-refresh"
+                    style="-fx-background-radius: 50; -fx-min-width: 45; -fx-min-height: 45; -fx-cursor: hand; -fx-background-color: white; -fx-border-color: #dfe4ea; -fx-border-radius: 50;"/>
+        </HBox>
 
-    <HBox spacing="10">
-        <Button text="Ajouter" styleClass="btn-success" onAction="#ajouterAdoptant"/>
-        <Button text="Modifier" styleClass="btn-warning" onAction="#modifierAdoptant"/>
-        <Button text="Supprimer" styleClass="btn-danger" onAction="#supprimerAdoptant"/>
-    </HBox>
-</VBox>
+        <VBox styleClass="chart-container" VBox.vgrow="ALWAYS">
+            <Label text="📋 Liste des membres" style="-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 0 0 10 0; -fx-text-fill: #2d3436;"/>
+            <TableView fx:id="adoptantTable" styleClass="modern-table" prefHeight="350">
+                <columns>
+                    <TableColumn fx:id="nomColumn" text="NOM" prefWidth="150"/>
+                    <TableColumn fx:id="prenomColumn" text="PRÉNOM" prefWidth="150"/>
+                    <TableColumn fx:id="telephoneColumn" text="TÉLÉPHONE" prefWidth="150"/>
+                    <TableColumn fx:id="emailColumn" text="EMAIL" prefWidth="250"/>
+                </columns>
+                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+            </TableView>
+        </VBox>
+
+        <VBox styleClass="form-card" spacing="20">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="📝 Édition des informations" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2d3436;"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label text="Tous les champs sont obligatoires" style="-fx-font-style: italic; -fx-text-fill: #b2bec3; -fx-font-size: 11;"/>
+            </HBox>
+
+            <GridPane hgap="20" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                </columnConstraints>
+
+                <VBox spacing="8" GridPane.columnIndex="0">
+                    <Label text="NOM DE FAMILLE" style="-fx-text-fill: #636e72; -fx-font-weight: bold; -fx-font-size: 11;"/>
+                    <TextField fx:id="nomField" promptText="Ex: Dupont" styleClass="modern-textfield"/>
+                </VBox>
+                <VBox spacing="8" GridPane.columnIndex="1">
+                    <Label text="PRÉNOM" style="-fx-text-fill: #636e72; -fx-font-weight: bold; -fx-font-size: 11;"/>
+                    <TextField fx:id="prenomField" promptText="Ex: Jean" styleClass="modern-textfield"/>
+                </VBox>
+                <VBox spacing="8" GridPane.columnIndex="2">
+                    <Label text="TÉLÉPHONE" style="-fx-text-fill: #636e72; -fx-font-weight: bold; -fx-font-size: 11;"/>
+                    <TextField fx:id="telephoneField" promptText="06 00 00 00 00" styleClass="modern-textfield"/>
+                </VBox>
+                <VBox spacing="8" GridPane.columnIndex="3">
+                    <Label text="ADRESSE EMAIL" style="-fx-text-fill: #636e72; -fx-font-weight: bold; -fx-font-size: 11;"/>
+                    <TextField fx:id="emailField" promptText="contact@exemple.com" styleClass="modern-textfield"/>
+                </VBox>
+            </GridPane>
+
+            <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                <Button text="🗑 Supprimer" onAction="#supprimerAdoptant" styleClass="btn-danger-waouh"/>
+                <Button text="✏️ Modifier" onAction="#modifierAdoptant" styleClass="btn-warning-waouh"/>
+                <Button text="✨ Ajouter un Adoptant" onAction="#ajouterAdoptant" styleClass="btn-success-waouh"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

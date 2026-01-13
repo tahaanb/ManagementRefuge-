@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.NavbarController">
+    
+    <!-- En-tête -->
+    <top>
+        <MenuBar>
+            <Menu text="Fichier">
+                <MenuItem text="Quitter" onAction="#handleQuit"/>
+            </Menu>
+            <Menu text="Aide">
+                <MenuItem text="À propos"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    
+    <!-- Barre latérale de navigation -->
+    <left>
+        <VBox style="-fx-background-color: #2c3e50; -fx-pref-width: 200; -fx-spacing: 10;" 
+              alignment="TOP_CENTER" spacing="10">
+            
+            <!-- Logo et titre -->
+            <VBox alignment="CENTER" style="-fx-padding: 20 0;">
+                <Label text="🐾" style="-fx-font-size: 36;"/>
+                <Label text="Refuge" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+                <Label text="Management" style="-fx-text-fill: #bdc3c7; -fx-font-size: 14;"/>
+            </VBox>
+            
+            <!-- Menu de navigation -->
+            <VBox spacing="10" style="-fx-padding: 0 10;">
+                <Button text="Tableau de bord" onAction="#goDashboard" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14; -fx-alignment: center-left;" />
+                <Button text="Animaux" onAction="#goAnimals" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14; -fx-alignment: center-left;" />
+                <Button text="Adoptants" onAction="#goAdoptants" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14; -fx-alignment: center-left;" />
+                <Button text="Historique" onAction="#goHistorique" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14; -fx-alignment: center-left;" />
+            </VBox>
+            
+            <!-- Pied de page -->
+            <VBox style="-fx-padding: 20 0;" alignment="CENTER">
+                <Label text="v1.0.0" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12;"/>
+            </VBox>
+            
+        </VBox>
+    </left>
+    
+    <!-- Contenu principal (sera chargé dynamiquement) -->
+    <center>
+        <!-- Le contenu sera chargé ici dynamiquement -->
+    </center>
+    
+</BorderPane>

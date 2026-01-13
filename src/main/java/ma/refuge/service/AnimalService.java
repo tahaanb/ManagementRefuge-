@@ -5,6 +5,8 @@ import ma.refuge.dao.HistoriqueDAO;
 import ma.refuge.model.Animal;
 import ma.refuge.model.Historique;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +23,30 @@ public class AnimalService {
         h.setDescription("Ajout de l'animal : " + animal.getNom());
         historiqueDAO.save(h);
     }
+    //Ajouter l'image
+    public void sauvegarderImage(File sourceFile, String nouveauNom) throws IOException {
+        File destDir = new File("uploads/animals/");
+        if (!destDir.exists()) destDir.mkdirs();
 
+        File destFile = new File(destDir, nouveauNom);
+        java.nio.file.Files.copy(sourceFile.toPath(), destFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    }
+    public void sauvegarderImagePhysique(File source, String destinationName) throws IOException {
+        // Créer le dossier s'il n'existe pas (à la racine du projet)
+        File directory = new File("uploads/animals/");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        File destination = new File(directory, destinationName);
+
+        // Copie standard Java NIO
+        java.nio.file.Files.copy(
+                source.toPath(),
+                destination.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+        );
+    }
     public void modifierAnimal(Animal animal) {
         animalDAO.update(animal);
         Historique h = new Historique();

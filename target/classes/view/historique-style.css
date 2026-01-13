@@ -1,0 +1,109 @@
+/* Fond principal avec le Glow dynamique que nous avons créé */
+.historique-container {
+    -fx-background-color:
+            radial-gradient(focus-angle 0deg, focus-distance 0%, center 0% 0%, radius 50%, rgba(108, 92, 231, 0.05), transparent),
+            linear-gradient(to bottom right, #fcfcfd, #f1f2f6);
+}
+
+/* En-tête de page */
+.historique-title {
+    -fx-font-size: 30px;
+    -fx-font-family: "Segoe UI", "System";
+    -fx-font-weight: 800;
+    -fx-text-fill: #2d3436;
+    -fx-padding: 20 0;
+}
+
+/* --- CARTES KPI (Key Performance Indicators) --- */
+.stats-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+    -fx-min-width: 250;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
+    -fx-border-color: #f1f2f6;
+    -fx-border-width: 1;
+}
+
+.stats-title {
+    -fx-text-fill: #636e72;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+.stats-value {
+    -fx-text-fill: #2d3436;
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+}
+
+/* --- GRAPHIQUES --- */
+.chart-container {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 15, 0, 0, 8);
+    -fx-border-color: #f1f2f6;
+}
+
+.chart-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
+    -fx-padding: 0 0 10 0;
+}
+
+/* --- TABLEAU DE DONNÉES ANALYTIQUE --- */
+.historique-table {
+    -fx-background-color: transparent;
+    -fx-background-radius: 15;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+}
+
+.historique-table .column-header-background {
+    -fx-background-color: #2d3436; /* Header sombre pour le côté pro */
+    -fx-background-radius: 15 15 0 0;
+}
+
+.historique-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 45;
+}
+
+.historique-table .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.historique-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f1f2f6 transparent;
+    -fx-cell-size: 50;
+}
+
+.historique-table .table-row-cell:odd {
+    -fx-background-color: #fafafa;
+}
+
+.historique-table .table-row-cell:hover {
+    -fx-background-color: #edf2ff;
+}
+
+/* --- PAGINATION & BOUTONS --- */
+.btn-nav {
+    -fx-background-color: white;
+    -fx-border-color: #6c5ce7;
+    -fx-border-radius: 8;
+    -fx-text-fill: #6c5ce7;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.btn-nav:hover {
+    -fx-background-color: #6c5ce7;
+    -fx-text-fill: white;
+}

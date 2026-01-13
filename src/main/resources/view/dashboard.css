@@ -1,0 +1,94 @@
+/* Fond du Dashboard avec dégradé subtil */
+.dashboard-container {
+    -fx-background-color: linear-gradient(to bottom right, #f1f2f6, #dfe4ea);
+}
+
+/* Titre avec reflet */
+.dashboard-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #2f3542;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+/* Cartes de statistiques (Effet Elevate) */
+.stat-card {
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+    -fx-min-width: 260;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 8);
+    -fx-transition: 0.3s;
+}
+.stat-card:hover {
+    -fx-translate-y: -5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 12);
+}
+
+/* Couleurs spécifiques aux cartes avec Glow */
+.card-animals { -fx-background-color: linear-gradient(to right, #6c5ce7, #a29bfe); }
+.card-adoptants { -fx-background-color: linear-gradient(to right, #00b894, #55efc4); }
+.card-health { -fx-background-color: linear-gradient(to right, #f0932b, #ffbe76); }
+.card-rate { -fx-background-color: linear-gradient(to right, #eb4d4b, #ff7979); }
+
+/* Graphiques */
+.chart-container {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 10);
+}
+
+/* Table d'activité au look épuré */
+.activity-table {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #f1f2f6;
+}
+.activity-table .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #57606f;
+    -fx-font-weight: bold;
+}
+
+/* --- Style Modernisé pour l'AreaChart --- */
+
+/* Fond interne du graphique (le rendre transparent ou blanc propre) */
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+/* Couleur de la ligne principale (Violet pour matcher ta première carte) */
+.default-color0.chart-series-area-line {
+    -fx-stroke: #6c5ce7;
+    -fx-stroke-width: 3px;
+}
+
+/* Couleur du remplissage sous la ligne (Dégradé transparent) */
+.default-color0.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, rgba(108, 92, 231, 0.3), transparent);
+}
+
+/* Style des petits points (symboles) */
+.default-color0.chart-line-symbol {
+    -fx-background-color: #6c5ce7, white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+/* Masquer la légende si nécessaire pour gagner de la place */
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+/* Style des axes (plus discrets) */
+.axis {
+    -fx-tick-label-fill: #636e72;
+    -fx-font-family: "Segoe UI";
+}
+.axis-label {
+    -fx-text-fill: #2f3542;
+    -fx-font-weight: bold;
+}

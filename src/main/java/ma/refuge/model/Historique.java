@@ -14,13 +14,19 @@ public class Historique {
     private LocalDateTime date;
     private String action;
     private String description;
+    private String status;
 
     public Historique() {}
 
+    // Constructeur avec paramètres
+    public Historique(LocalDateTime date, String action, String description, String status) {
+        this.date = date;
+        this.action = action;
+        this.description = description;
+        this.status = status;
+    }
 
-
-
-/* Getters & Setters */
+    /* Getters & Setters */
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -33,4 +39,7 @@ public class Historique {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

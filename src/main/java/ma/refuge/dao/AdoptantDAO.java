@@ -41,7 +41,16 @@ public class AdoptantDAO {
 
     public List<Adoptant> findAll() {
         try (Session s = HibernateUtil.getSessionFactory().openSession()) {
-            return s.createQuery("from Adoptant", Adoptant.class).list();
+            return s.createQuery("SELECT DISTINCT a FROM Adoptant a LEFT JOIN FETCH a.animauxAdoptes", Adoptant.class).list();
+        }
+    }
+    
+    public boolean aDesAnimauxAdoptes(int adoptantId) {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT COUNT(a) > 0 FROM Animal a WHERE a.adoptant.id = :adoptantId";
+            return s.createQuery(hql, Boolean.class)
+                   .setParameter("adoptantId", adoptantId)
+                   .uniqueResult();
         }
     }
 }

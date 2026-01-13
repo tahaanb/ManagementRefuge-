@@ -16,6 +16,7 @@ ma\refuge\controller\HistoriqueController.class
 ma\refuge\util\test.class
 ma\refuge\service\service.class
 ma\refuge\dao\AdoptantDAO.class
+ma\refuge\model\FicheSante$TypeConsultation.class
 ma\refuge\controller\DashboardController.class
 ma\refuge\controller\AdoptantController.class
 ma\refuge\model\FicheSante.class

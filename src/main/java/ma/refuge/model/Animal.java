@@ -1,6 +1,7 @@
 package ma.refuge.model;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -21,6 +22,12 @@ public class Animal {
 
     @Column(name = "photo_path")
     private String photoPath;
+    
+    @Column(name = "date_arrivee")
+    private LocalDate dateArrivee;
+    
+    @Column(name = "date_adoption")
+    private LocalDate dateAdoption;
 
     @ManyToOne
     @JoinColumn(name = "adoptant_id")
@@ -69,4 +76,10 @@ public class Animal {
 
     public List<FicheSante> getFichesSante() { return fichesSante; }
     public void setFichesSante(List<FicheSante> fichesSante) { this.fichesSante = fichesSante; }
+    
+    public LocalDate getDateArrivee() { return dateArrivee; }
+    public void setDateArrivee(LocalDate dateArrivee) { this.dateArrivee = dateArrivee; }
+    
+    public LocalDate getDateAdoption() { return dateAdoption; }
+    public void setDateAdoption(LocalDate dateAdoption) { this.dateAdoption = dateAdoption; }
 }

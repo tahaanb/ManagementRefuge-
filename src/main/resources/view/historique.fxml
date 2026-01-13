@@ -1,24 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<VBox spacing="15"
-      xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ma.refuge.controller.HistoriqueController">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
 
-    <Label text="Historique des Actions" styleClass="title"/>
+<ScrollPane fitToWidth="true" styleClass="historique-container"
+            stylesheets="@historique-style.css"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ma.refuge.controller.HistoriqueController">
 
-    <TableView fx:id="historiqueTable">
-        <columns>
-            <TableColumn fx:id="dateColumn" text="Date"/>
-            <TableColumn fx:id="actionColumn" text="Action"/>
-            <TableColumn fx:id="descriptionColumn" text="Description"/>
-        </columns>
-    </TableView>
-</VBox>
+    <VBox spacing="30" styleClass="historique-container" style="-fx-padding: 40;">
+
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <VBox>
+                <Label text="📊 Historique des Opérations" styleClass="historique-title"/>
+                <Label text="Analyse détaillée des flux et des activités du refuge" style="-fx-text-fill: #636e72; -fx-font-size: 14;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="📥 Exporter Rapport (CSV)" styleClass="btn-nav"/>
+        </HBox>
+
+        <HBox spacing="25" alignment="CENTER">
+            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS">
+                <Label text="TOTAL ACTIONS" styleClass="stats-title"/>
+                <Label fx:id="totalActionsLabel" text="142" styleClass="stats-value"/>
+                <Label text="↑ 12% ce mois" style="-fx-text-fill: #2ecc71; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS">
+                <Label text="FLUX QUOTIDIEN" styleClass="stats-title"/>
+                <Label fx:id="dailyActionsLabel" text="8" styleClass="stats-value"/>
+                <Label text="Stable vs hier" style="-fx-text-fill: #3498db; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS">
+                <Label text="ALERTES SYSTÈME" styleClass="stats-title"/>
+                <Label fx:id="alertsLabel" text="3" styleClass="stats-value" style="-fx-text-fill: #e74c3c;"/>
+                <Label text="Action requise" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+            </VBox>
+        </HBox>
+
+        <GridPane hgap="25" vgap="25">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="60"/>
+                <ColumnConstraints percentWidth="40"/>
+            </columnConstraints>
+
+            <VBox styleClass="chart-container" GridPane.columnSpan="1">
+                <Label text="📈 Chronologie d'Activité" styleClass="chart-title"/>
+                <AreaChart fx:id="activityChart" createSymbols="true" prefHeight="300">
+                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                </AreaChart>
+            </VBox>
+            <VBox styleClass="chart-container">
+                <Label text="Tendances Mensuelles" styleClass="chart-title"/>
+                <BarChart fx:id="monthlyBarChart" legendVisible="false" prefHeight="300">
+                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                </BarChart>
+            </VBox>
+            <VBox styleClass="chart-container" GridPane.columnIndex="1">
+                <Label text="🍩 Répartition des Opérations" styleClass="chart-title"/>
+                <PieChart fx:id="typePieChart" prefHeight="300" />
+            </VBox>
+        </GridPane>
+
+        <VBox spacing="15" styleClass="chart-container">
+            <Label text="📑 Registre détaillé des journaux" styleClass="chart-title"/>
+
+            <TableView fx:id="historiqueTable" styleClass="historique-table" prefHeight="400">
+                <columns>
+                    <TableColumn fx:id="dateColumn" text="HORODATAGE" prefWidth="180" />
+                    <TableColumn fx:id="actionColumn" text="ÉVÉNEMENT" prefWidth="150" />
+                    <TableColumn fx:id="descriptionColumn" text="DESCRIPTION DÉTAILLÉE" prefWidth="400" />
+                    <TableColumn fx:id="statusColumn" text="ÉTAT" prefWidth="120" />
+                </columns>
+                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+            </TableView>
+
+            <HBox alignment="CENTER_RIGHT" spacing="15">
+                <Label fx:id="pageInfo" text="Affichage de 1 à 15 sur 142 entrées" style="-fx-text-fill: #636e72;"/>
+                <HBox spacing="5">
+                    <Button text="Précédent" styleClass="btn-nav" onAction="#previousPage" />
+                    <Button text="Suivant" styleClass="btn-nav" onAction="#nextPage" />
+                </HBox>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

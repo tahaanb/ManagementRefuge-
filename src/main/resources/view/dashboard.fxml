@@ -1,30 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.*?>
 
-<BorderPane fx:id="root"
+<ScrollPane fitToWidth="true" styleClass="dashboard-container"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ma.refuge.controller.DashboardController">
 
-    <top>
-        <fx:include source="navbar.fxml"/>
-    </top>
 
-    <center>
-        <VBox spacing="30" alignment="CENTER" styleClass="dashboard">
-            <Label text="🐾 Refuge Management System" styleClass="title"/>
-            <HBox spacing="20">
-                <VBox styleClass="card">
-                    <Label text="Animaux"/>
-                    <Label fx:id="animalCount"/>
+        <VBox spacing="30" styleClass="dashboard-content" style="-fx-padding: 40;">
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox>
+                    <Label text="🐾 Refuge Dashboard" styleClass="dashboard-title"/>
+                    <Label text="Bienvenue ! Voici l'état actuel de votre refuge." style="-fx-text-fill: #747d8c; -fx-font-size: 14px;"/>
                 </VBox>
-                <VBox styleClass="card">
-                    <Label text="Adoptants"/>
-                    <Label fx:id="adoptantCount"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <VBox alignment="CENTER_RIGHT">
+                    <Label fx:id="lastUpdated" styleClass="last-updated" text="Mis à jour : Juste maintenant" />
+                    <Button text="🔄 Actualiser" style="-fx-background-radius: 20; -fx-background-color: white; -fx-border-color: #dfe4ea; -fx-border-radius: 20;"/>
                 </VBox>
             </HBox>
+
+            <FlowPane hgap="25" vgap="25" alignment="CENTER">
+                <VBox styleClass="stat-card, card-animals">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="🐶" style="-fx-font-size: 30;"/>
+                        <VBox>
+                            <Label text="ANIMAUX" styleClass="stat-title"/>
+                            <Label fx:id="animalCount" text="124" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="adoptedCount" text="45 Adoptés" styleClass="stat-subtitle"/>
+                </VBox>
+
+                <VBox styleClass="stat-card, card-adoptants">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="🤝" style="-fx-font-size: 30;"/>
+                        <VBox>
+                            <Label text="ADOPTANTS" styleClass="stat-title"/>
+                            <Label fx:id="adoptantCount" text="89" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="activeAdoptants" text="12 en attente" styleClass="stat-subtitle"/>
+                </VBox>
+
+                <VBox styleClass="stat-card, card-health">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="🩺" style="-fx-font-size: 30;"/>
+                        <VBox>
+                            <Label text="SANTÉ" styleClass="stat-title"/>
+                            <Label fx:id="ficheSanteCount" text="210" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="urgentFiches" text="3 Urgences" styleClass="stat-subtitle" style="-fx-background-color: rgba(255,255,255,0.2); -fx-background-radius: 5;"/>
+                </VBox>
+
+                <VBox styleClass="stat-card, card-rate">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="📈" style="-fx-font-size: 30;"/>
+                        <VBox>
+                            <Label text="TAUX" styleClass="stat-title"/>
+                            <Label fx:id="adoptionRate" text="78%" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="avgAdoptionTime" text="Moy. 14 jours" styleClass="stat-subtitle"/>
+                </VBox>
+            </FlowPane>
+
+            <HBox spacing="30" VBox.vgrow="ALWAYS">
+                <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                    <Label text="📊 Analyse des Adoptions" styleClass="section-title"/>
+                    <AreaChart fx:id="adoptionChart" styleClass="chart" titleSide="TOP">
+                        <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                        <yAxis><NumberAxis side="LEFT" /></yAxis>
+                    </AreaChart>
+                </VBox>
+
+                <VBox spacing="15" prefWidth="450">
+                    <Label text="🔔 Activités Récentes" styleClass="section-title"/>
+                    <TableView fx:id="recentActivityTable" VBox.vgrow="ALWAYS" styleClass="activity-table">
+                        <columns>
+                            <TableColumn text="Action" fx:id="actionCol" prefWidth="120" />
+                            <TableColumn text="Détails" fx:id="descCol" prefWidth="250" />
+                        </columns>
+                        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </HBox>
+
         </VBox>
-    </center>
-</BorderPane>
+
+</ScrollPane>

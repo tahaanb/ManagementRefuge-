@@ -1,66 +1,153 @@
 .root {
-    -fx-font-family: "Segoe UI";
-    -fx-background-color: #f4f6f9;
+    -fx-background-color: linear-gradient(to bottom right, #6c5ce7, #a29bfe);
 }
 
-/* NAVBAR */
-.navbar {
-    -fx-padding: 15;
-    -fx-background-color: linear-gradient(to right, #1e3c72, #2a5298);
-}
-
-.navbar Button {
-    -fx-background-color: transparent;
+.main-title {
+    -fx-font-size: 32px;
+    -fx-font-family: "Segoe UI Semibold";
     -fx-text-fill: white;
-    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 0);
+}
+
+/* Carte en mode "Glassmorphism" */
+.form-card {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 10);
+}
+
+/* Tableau Moderne */
+.modern-table {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 15;
+    -fx-padding: 5;
+}
+.modern-table .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2d3436;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent #dfe6e9 transparent;
+}
+.table-row-cell:selected {
+    -fx-background-color: #a29bfe;
+    -fx-text-fill: white;
+}
+
+/* Bouton Adoption Spécial */
+.btn-adopt {
+    -fx-background-color: #fd79a8;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30;
+    -fx-cursor: hand;
+}
+.btn-adopt:hover { -fx-background-color: #e84393; -fx-scale-x: 1.05; -fx-scale-y: 1.05; }
+
+/* Badges de Statut */
+.badge-dispo { -fx-background-color: #55efc4; -fx-text-fill: #00b894; -fx-padding: 2 8; -fx-background-radius: 10; }
+.badge-adopte { -fx-background-color: #ff7675; -fx-text-fill: #d63031; -fx-padding: 2 8; -fx-background-radius: 10; }
+
+
+
+/* --- TextFields Modernes --- */
+.modern-textfield {
+    -fx-background-color: #f1f2f6;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-padding: 10;
+    -fx-font-size: 14;
+    -fx-transition: 0.3s;
+}
+.modern-textfield:focused {
+    -fx-background-color: white;
+    -fx-border-color: #6c5ce7;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(108, 92, 231, 0.2), 10, 0, 0, 0);
+}
+
+/* --- Boutons Action Waouh --- */
+.btn-success-waouh {
+    -fx-background-color: linear-gradient(to right, #00b894, #55efc4);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-padding: 12 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 184, 148, 0.3), 10, 0, 0, 5);
+}
+
+.btn-warning-waouh {
+    -fx-background-color: linear-gradient(to right, #f0932b, #ffbe76);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-padding: 12 25;
     -fx-cursor: hand;
 }
 
-.navbar Button:hover {
-    -fx-underline: true;
-}
-
-/* TITRES */
-.title {
-    -fx-font-size: 26px;
+.btn-danger-waouh {
+    -fx-background-color: linear-gradient(to right, #d63031, #ff7675);
+    -fx-text-fill: white;
     -fx-font-weight: bold;
-}
-
-/* DASHBOARD */
-.dashboard {
-    -fx-padding: 40;
-}
-
-.card {
-    -fx-background-color: white;
-    -fx-padding: 30;
     -fx-background-radius: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 5);
-    -fx-transition: all 0.3s;
+    -fx-padding: 12 25;
+    -fx-cursor: hand;
 }
 
-.card:hover {
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+/* Animation de survol boutons */
+.btn-success-waouh:hover, .btn-warning-waouh:hover, .btn-danger-waouh:hover {
+    -fx-translate-y: -2;
+    -fx-brightness: 1.1;
 }
 
-/* BOUTONS */
-.btn-success {
-    -fx-background-color: #2ecc71;
-    -fx-text-fill: white;
+/* Style spécifique pour le tableau des adoptants */
+.modern-table .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 15;
+    -fx-font-size: 13;
 }
 
-.btn-warning {
-    -fx-background-color: #f39c12;
-    -fx-text-fill: white;
+/* Fond spécifique pour la page Adoptants */
+.adoptant-page-container {
+    -fx-background-color: linear-gradient(to bottom right, #e8f8f5, #d1f2eb);
 }
 
-.btn-danger {
-    -fx-background-color: #e74c3c;
-    -fx-text-fill: white;
+/* Titre spécifique Adoptants */
+.adoptant-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00b894; /* Vert émeraude */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
 }
 
-Button {
-    -fx-padding: 10 20;
-    -fx-background-radius: 10;
+/* Header de la carte de formulaire adoptant */
+.adoptant-form-header {
+    -fx-background-color: linear-gradient(to right, #00b894, #55efc4);
+    -fx-background-radius: 15 15 0 0;
+    -fx-padding: 15;
 }
+
+/* --- Correction Transparence ScrollPane --- */
+.dashboard-container {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.dashboard-container .viewport {
+    -fx-background-color: transparent;
+}
+
+/* --- Le fond dégradé du Dashboard --- */
+.dashboard-content {
+    -fx-background-color: linear-gradient(to bottom right, #f1f2f6, #dfe4ea);
+}
+
+/* --- Titre --- */
+.dashboard-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #2f3542;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+/* --- Votre CSS existant (btn-success-waouh, form-card, etc.) continue ici --- */

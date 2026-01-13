@@ -9,8 +9,9 @@
       fx:controller="ma.refuge.controller.NavbarController"
       styleClass="navbar">
 
-    <Button text="Dashboard" onAction="#goDashboard"/>
-    <Button text="Animaux" onAction="#goAnimals"/>
-    <Button text="Adoptants" onAction="#goAdoptants"/>
-    <Button text="Historique" onAction="#goHistorique"/>
+
+    <Button text="🏠 Dashboard" onAction="#goDashboard"/>
+    <Button text="🐾 Animaux" onAction="#goAnimals"/>
+    <Button text="👥 Adoptants" onAction="#goAdoptants"/>
+    <Button text="📋 Historique" onAction="#goHistorique"/>
 </HBox>

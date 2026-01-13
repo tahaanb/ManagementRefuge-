@@ -53,58 +53,52 @@ public class AdoptantController {
 
         // Vérification des champs vides
         if (nom.isEmpty() || prenom.isEmpty() || telephone.isEmpty() || email.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Champs obligatoires manquants");
-            alert.setContentText("Tous les champs (Nom, Prénom, Téléphone, Email) sont obligatoires.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Champs obligatoires manquants", 
+                     "Tous les champs (Nom, Prénom, Téléphone, Email) sont obligatoires.");
+            return;
+        }
+
+        // Validation des longueurs maximales
+        if (nom.length() > 50 || prenom.length() > 50 || telephone.length() > 20 || email.length() > 100) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Données trop longues", 
+                     "Les longueurs maximales sont :\n- Nom : 50 caractères\n- Prénom : 50 caractères\n- Téléphone : 20 caractères\n- Email : 100 caractères");
             return;
         }
 
         // Validation du format email
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         if (!Pattern.matches(emailRegex, email)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Email invalide");
-            alert.setContentText("Veuillez saisir une adresse email valide (ex: nom@domaine.com).");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Email invalide", 
+                     "Veuillez saisir une adresse email valide (ex: nom@domaine.com).");
             return;
         }
 
-        // Validation du téléphone (format marocain simple)
+        // Validation du téléphone (format marocain)
         String phoneRegex = "^(\\+212|0)[6-7][0-9]{8}$";
         if (!Pattern.matches(phoneRegex, telephone)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Téléphone invalide");
-            alert.setContentText("Le numéro de téléphone doit être au format marocain (ex: 0612345678 ou +212612345678).");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Téléphone invalide", 
+                     "Le numéro de téléphone doit être au format marocain valide :\n- Commencer par 0 ou +212\n- Suivi de 6 ou 7\n- Puis de 8 chiffres\nExemples : 0612345678 ou +212612345678");
             return;
         }
 
-        // Validation de la longueur des champs
-        if (nom.length() > 50 || prenom.length() > 50 || telephone.length() > 20 || email.length() > 100) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Données trop longues");
-            alert.setContentText("Vérifiez la longueur des champs saisie.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Vérification que l'adoptant n'existe pas déjà (même nom + prénom + téléphone)
-        boolean adoptantExists = adoptantService.listerAdoptants().stream()
-                .anyMatch(a -> a.getNom().equalsIgnoreCase(nom) &&
-                              a.getPrenom().equalsIgnoreCase(prenom) &&
-                              a.getTelephone().equals(telephone));
-        if (adoptantExists) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Adoptant déjà existant");
-            alert.setContentText("Un adoptant avec le même nom, prénom et numéro de téléphone existe déjà dans le système.");
-            alert.showAndWait();
-            return;
+        // Vérification des doublons (email et téléphone)
+        for (Adoptant a : adoptantService.listerAdoptants()) {
+            if (a.getEmail().equalsIgnoreCase(email)) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", 
+                         "Email déjà utilisé", 
+                         "Cette adresse email est déjà utilisée par un autre adoptant.");
+                return;
+            }
+            if (a.getTelephone().equals(telephone)) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", 
+                         "Téléphone déjà utilisé", 
+                         "Ce numéro de téléphone est déjà utilisé par un autre adoptant.");
+                return;
+            }
         }
 
         // Création et sauvegarde de l'adoptant
@@ -112,20 +106,16 @@ public class AdoptantController {
             Adoptant adoptant = new Adoptant(nom, prenom, telephone, email);
             adoptantService.ajouterAdoptant(adoptant);
 
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Succès");
-            successAlert.setHeaderText("Adoptant ajouté");
-            successAlert.setContentText("L'adoptant \"" + nom + " " + prenom + "\" a été ajouté avec succès.");
-            successAlert.showAndWait();
+            showAlert(Alert.AlertType.INFORMATION, "Succès", 
+                     "Adoptant ajouté avec succès", 
+                     String.format("L'adoptant %s %s a été enregistré avec succès.", nom, prenom));
 
             chargerAdoptants();
             viderChamps();
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Erreur lors de l'ajout");
-            alert.setContentText("Une erreur s'est produite lors de l'ajout de l'adoptant : " + e.getMessage());
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                     "Échec de l'ajout", 
+                     "Une erreur est survenue lors de l'ajout de l'adoptant : " + e.getMessage());
         }
     }
 
@@ -133,12 +123,21 @@ public class AdoptantController {
     public void modifierAdoptant() {
         Adoptant selected = adoptantTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText("Aucun adoptant sélectionné");
-            alert.setContentText("Veuillez sélectionner un adoptant dans le tableau avant de modifier.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.WARNING, "Avertissement", 
+                     "Aucun adoptant sélectionné", 
+                     "Veuillez sélectionner un adoptant dans le tableau avant de modifier.");
             return;
+        }
+
+        // Demande de confirmation avant modification
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Confirmation de modification");
+        confirmAlert.setHeaderText("Modifier l'adoptant");
+        confirmAlert.setContentText("Êtes-vous sûr de vouloir modifier les informations de cet adoptant ?");
+        
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) {
+            return; // L'utilisateur a annulé
         }
 
         // Validation des champs
@@ -149,56 +148,54 @@ public class AdoptantController {
 
         // Vérification des champs vides
         if (nom.isEmpty() || prenom.isEmpty() || telephone.isEmpty() || email.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Champs obligatoires manquants");
-            alert.setContentText("Tous les champs (Nom, Prénom, Téléphone, Email) sont obligatoires.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Champs obligatoires manquants", 
+                     "Tous les champs (Nom, Prénom, Téléphone, Email) sont obligatoires.");
+            return;
+        }
+
+        // Validation des longueurs maximales
+        if (nom.length() > 50 || prenom.length() > 50 || telephone.length() > 20 || email.length() > 100) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Données trop longues", 
+                     "Les longueurs maximales sont :\n- Nom : 50 caractères\n- Prénom : 50 caractères\n- Téléphone : 20 caractères\n- Email : 100 caractères");
             return;
         }
 
         // Validation du format email
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         if (!Pattern.matches(emailRegex, email)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Email invalide");
-            alert.setContentText("Veuillez saisir une adresse email valide (ex: nom@domaine.com).");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Email invalide", 
+                     "Veuillez saisir une adresse email valide (ex: nom@domaine.com).");
             return;
         }
 
-        // Validation du téléphone
+        // Validation du téléphone (format marocain)
         String phoneRegex = "^(\\+212|0)[6-7][0-9]{8}$";
         if (!Pattern.matches(phoneRegex, telephone)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Téléphone invalide");
-            alert.setContentText("Le numéro de téléphone doit être au format marocain (ex: 0612345678 ou +212612345678).");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur de saisie", 
+                     "Téléphone invalide", 
+                     "Le numéro de téléphone doit être au format marocain valide :\n- Commencer par 0 ou +212\n- Suivi de 6 ou 7\n- Puis de 8 chiffres\nExemples : 0612345678 ou +212612345678");
             return;
         }
 
-        // Validation de la longueur des champs
-        if (nom.length() > 50 || prenom.length() > 50 || telephone.length() > 20 || email.length() > 100) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur de saisie");
-            alert.setHeaderText("Données trop longues");
-            alert.setContentText("Vérifiez la longueur des champs saisie.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Vérification que l'email n'existe pas déjà (sauf pour l'adoptant actuel)
-        boolean emailExists = adoptantService.listerAdoptants().stream()
-                .anyMatch(a -> a.getEmail().equalsIgnoreCase(email) && a.getId() != selected.getId());
-        if (emailExists) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Email déjà utilisé");
-            alert.setContentText("Cette adresse email est déjà utilisée par un autre adoptant.");
-            alert.showAndWait();
-            return;
+        // Vérification des doublons (email et téléphone)
+        for (Adoptant a : adoptantService.listerAdoptants()) {
+            if (a.getId() != selected.getId()) { // Ne pas vérifier l'adoptant actuel
+                if (a.getEmail().equalsIgnoreCase(email)) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", 
+                             "Email déjà utilisé", 
+                             "Cette adresse email est déjà utilisée par un autre adoptant.");
+                    return;
+                }
+                if (a.getTelephone().equals(telephone)) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", 
+                             "Téléphone déjà utilisé", 
+                             "Ce numéro de téléphone est déjà utilisé par un autre adoptant.");
+                    return;
+                }
+            }
         }
 
         // Modification de l'adoptant
@@ -207,22 +204,19 @@ public class AdoptantController {
             selected.setPrenom(prenom);
             selected.setTelephone(telephone);
             selected.setEmail(email);
+            
             adoptantService.modifierAdoptant(selected);
 
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Succès");
-            successAlert.setHeaderText("Adoptant modifié");
-            successAlert.setContentText("L'adoptant \"" + nom + " " + prenom + "\" a été modifié avec succès.");
-            successAlert.showAndWait();
+            showAlert(Alert.AlertType.INFORMATION, "Succès", 
+                     "Modification réussie", 
+                     String.format("Les informations de l'adoptant %s %s ont été mises à jour avec succès.", nom, prenom));
 
             chargerAdoptants();
             viderChamps();
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Erreur lors de la modification");
-            alert.setContentText("Une erreur s'est produite lors de la modification de l'adoptant : " + e.getMessage());
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                     "Échec de la modification", 
+                     "Une erreur est survenue lors de la modification de l'adoptant : " + e.getMessage());
         }
     }
 
@@ -230,55 +224,58 @@ public class AdoptantController {
     public void supprimerAdoptant() {
         Adoptant selected = adoptantTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText("Aucun adoptant sélectionné");
-            alert.setContentText("Veuillez sélectionner un adoptant dans le tableau avant de supprimer.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.WARNING, "Avertissement", 
+                     "Aucun adoptant sélectionné", 
+                     "Veuillez sélectionner un adoptant dans le tableau avant de supprimer.");
             return;
         }
 
-        // Vérification si l'adoptant a des animaux adoptés
-        if (selected.getAnimauxAdoptes() != null && !selected.getAnimauxAdoptes().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Suppression impossible");
-            alert.setHeaderText("Adoptant avec animaux");
-            alert.setContentText("Cet adoptant a " + selected.getAnimauxAdoptes().size() +
-                " animal(aux) adopté(s). Vous ne pouvez pas le supprimer tant qu'il a des animaux à sa charge.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Confirmation de suppression
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirmation de suppression");
-        confirmAlert.setHeaderText("Supprimer l'adoptant");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer l'adoptant \"" +
-            selected.getNom() + " " + selected.getPrenom() + "\" ?\n\nCette action est irréversible.");
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) {
-            return;
-        }
-
-        // Suppression de l'adoptant
         try {
+            // Vérification si l'adoptant a des animaux adoptés
+            if (adoptantService.aDesAnimauxAdoptes(selected.getId())) {
+                showAlert(Alert.AlertType.ERROR, "Suppression impossible", 
+                         "Adoptant avec animaux", 
+                         "Cet adoptant a des animaux à sa charge. Veuillez d'abord libérer ces animaux avant de pouvoir le supprimer.");
+                return;
+            }
+
+            // Confirmation de suppression
+            Alert confirmAlert = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                String.format("Êtes-vous sûr de vouloir supprimer définitivement l'adoptant :\n\n" +
+                             "• Nom : %s %s\n" +
+                             "• Téléphone : %s\n" +
+                             "• Email : %s\n\n" +
+                             "⚠️ Cette action est irréversible !",
+                             selected.getNom(), selected.getPrenom(), 
+                             selected.getTelephone(), selected.getEmail()),
+                ButtonType.YES, 
+                ButtonType.NO
+            );
+            
+            confirmAlert.setTitle("Confirmation de suppression");
+            confirmAlert.setHeaderText("Supprimer définitivement cet adoptant ?");
+            
+            Optional<ButtonType> result = confirmAlert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.YES) {
+                return; // L'utilisateur a annulé
+            }
+
+            // Suppression de l'adoptant
+            String nomComplet = selected.getNom() + " " + selected.getPrenom();
             adoptantService.supprimerAdoptant(selected.getId());
 
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Succès");
-            successAlert.setHeaderText("Adoptant supprimé");
-            successAlert.setContentText("L'adoptant \"" + selected.getNom() + " " + selected.getPrenom() + "\" a été supprimé avec succès.");
-            successAlert.showAndWait();
+            showAlert(Alert.AlertType.INFORMATION, "Succès", 
+                     "Adoptant supprimé", 
+                     String.format("L'adoptant %s a été supprimé avec succès.", nomComplet));
 
             chargerAdoptants();
             viderChamps();
+            
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Erreur lors de la suppression");
-            alert.setContentText("Une erreur s'est produite lors de la suppression de l'adoptant : " + e.getMessage());
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                     "Échec de la suppression", 
+                     "Une erreur est survenue lors de la suppression de l'adoptant : " + e.getMessage());
         }
     }
 
@@ -288,16 +285,42 @@ public class AdoptantController {
     }
 
     private void remplirChamps(Adoptant adoptant) {
-        nomField.setText(adoptant.getNom());
-        prenomField.setText(adoptant.getPrenom());
-        telephoneField.setText(adoptant.getTelephone());
-        emailField.setText(adoptant.getEmail());
+        if (adoptant != null) {
+            // Mettre à jour les champs
+            nomField.setText(adoptant.getNom());
+            prenomField.setText(adoptant.getPrenom());
+            telephoneField.setText(adoptant.getTelephone());
+            emailField.setText(adoptant.getEmail());
+            
+            // Sélectionner l'élément dans le tableau
+            adoptantTable.getSelectionModel().select(adoptant);
+            adoptantTable.scrollTo(adoptant);
+        }
     }
 
     private void viderChamps() {
+        // Effacer les champs
         nomField.clear();
         prenomField.clear();
         telephoneField.clear();
         emailField.clear();
+        
+        // Désélectionner l'élément dans le tableau
+        adoptantTable.getSelectionModel().clearSelection();
+    }
+    
+    /**
+     * Affiche une boîte de dialogue d'alerte
+     * @param type Type d'alerte (ERROR, WARNING, INFORMATION, etc.)
+     * @param title Titre de la fenêtre
+     * @param header En-tête du message
+     * @param content Contenu détaillé du message
+     */
+    private void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
